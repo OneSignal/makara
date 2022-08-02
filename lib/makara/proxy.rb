@@ -125,14 +125,14 @@ module Makara
       end
     end
 
-    def method_missing(m, *args, &block)
+    def method_missing(m, ...)
       if METHOD_MISSING_SKIP.include?(m)
         return super
       end
 
       any_connection do |con|
         if con.respond_to?(m, true)
-          con.send(m, *args, &block)
+          con.send(m, ...)
         else
           super
         end
@@ -166,11 +166,11 @@ module Makara
 
     protected
 
-    def send_to_all(method_name, *args)
+    def send_to_all(method_name, ...)
       # replica pool must run first to allow for replica --> primary failover without running operations on the primary twice.
       handling_an_all_execution(method_name) do
-        @replica_pool.send_to_all(method_name, *args)
-        @primary_pool.send_to_all(method_name, *args)
+        @replica_pool.send_to_all(method_name, ...)
+        @primary_pool.send_to_all(method_name, ...)
       end
     end
 
